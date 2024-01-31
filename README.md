@@ -1,4 +1,3 @@
 # Osrm-frontend-test
 
-My test version for osrm project. \n
-Self-use
+My test version for osrm project. \Self-use
