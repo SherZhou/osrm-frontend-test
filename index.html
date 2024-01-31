@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8" />
+  <title>Open Source Routing Machine DEMO</title>
+  <meta name='viewport' content='initial-scale=1.0 maximum-scale=1.0'>
+  <link rel="shortcut icon" href="favicon.ico" />
+  <link rel='stylesheet' href="css/leaflet.css" />
+  <link rel="stylesheet" href="css/fonts.css" />
+  <link href='css/site.css' rel='stylesheet' />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Arial', sans-serif;
+      background-color: #f4f4f4;
+      /* z-index: 1; */
+    }
+
+    .truck-form {
+      /* position: relative;
+      display: flex; */
+      flex-direction: column;
+      /* align-items: flex-start; */
+      justify-content: center;
+      max-width: 100%;
+      width: 100%;
+      margin: 0 auto;
+      /* padding: 10px; */
+      z-index: 1;
+      resize: both;
+      overflow-y: scroll;
+      top: 20px;
+      max-height: 32%;
+
+      
+    }
+
+    .map {
+      display: flex;
+      z-index: 0;
+      height: 100%;
+      top: 32%;
+      height:78%;
+    }
+
+    .input-form {
+      /* top: 20%; */
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      /* 三列，每列平均分配剩余空间 */
+      gap: 5px;
+      /* 列之间的间隙，根据需要调整 */
+      grid-row-gap: 0px;
+      flex-wrap: wrap;
+      /* 允许换行 */
+      justify-content: space-between;
+      /* 两列间距相等 */
+      background-color: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      /* padding: 20px; */
+      /* margin-top: 20px; */
+      width: 100%;
+      box-sizing: border-box;
+
+      /* 添加垂直滚动条 */
+      max-height: 380px;
+      overflow-y: scroll;
+
+      transition: max-height 0.5s ease, opacity 0.5s ease;
+      /* 添加过渡效果 */
+    }
+
+    .input-row {
+      display: flex;
+      flex-direction: column;
+      width: 100%
+    }
+
+    .input-column {
+      margin-bottom: 0px;
+      /* 使用负的margin减小行间距 */
+    }
+
+    .input-row label {
+      margin-bottom: 5px;
+      margin-top: 10%;
+      width: 100%
+    }
+
+    .input-row input {
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      width: 100%;
+    }
+
+
+
+    .input-form label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #333;
+      /* 控制标签宽度 */
+      width: auto;
+      font-size: 13px;
+      max-width: 100%;
+      /* 设置最大宽度 */
+      /* overflow: hidden; */
+      /* 文本不换行 */
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      /* 超出部分显示省略号 */
+      text-align: center;
+    }
+
+    .input-form input {
+      width: 100%;
+      /* 控制输入框宽度 */
+      margin-bottom: 15px;
+      padding: 10px;
+      font-size: 13px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    .input-form button {
+      grid-column: span 2;
+      /* 按钮跨越2列 */
+      width: 80%;
+      background-color: #5a749e;
+      color: white;
+      padding: 8px 8px;
+      height: 35px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 0 auto;
+    }
+
+    .input-form h1 {
+      grid-column: span 6;
+      font-size: 16px;
+      text-align: center;
+      margin-bottom: 16px;
+      margin-top: 20px;
+      color: #5a749e;
+    }
+
+
+    .input-form button:hover {
+      background-color: #5a749e;
+    }
+
+
+
+    .container {
+      display: flex;
+      justify-content: center;
+      top: 0;
+      right: 0;
+      left: 0;
+      background-color: white;
+    }
+
+    .buttons {
+      margin-left: 50%;
+      display: inline-block;
+      background-color: #0062CC;
+      overflow: hidden;
+      z-index: 1;
+      /* 浮起来 不会滚动 */
+      /* position: fixed; */
+      top: 0;
+      right: 0;
+      left: 50%;
+      width: 100%;
+      height: 5%;
+      right: 0px;
+      top: 0px;
+      text-align: center;
+      /* float:none; */
+
+    }
+
+    .tab {
+      overflow: hidden;
+      padding: 10px 20px;
+      cursor: pointer;
+      color: gray;
+      outline: none;
+      transition: background-color 0.3s;
+      flex-grow: 0;
+      margin: 0 auto;
+      max-width: 100%;
+      box-sizing: border-box;
+      position: relative;
+      z-index: 3;
+      border: 1px solid white;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+
+<body>
+  <!-- <div class="container"> -->
+
+  <!-- <div id="buttons">
+      <button class="tab" onclick="openTab(event,'truck-form')">Truck Info</button>
+      <button class="tab" onclick="openTab(event,'map')">Map</button>
+    </div> -->
+
+  <div id='truck-form'>
+
+    <!-- 输入表格框 -->
+    <div class="input-form">
+
+      <h1>Truck Info Input</h1>
+
+      <label for="param1">Tractor Width:</label>
+      <input type="text" id="param1" placeholder="0">
+
+      <label for="param2">Trailer Width:</label>
+      <input type="text" id="param2" placeholder="0">
+
+      <label for="param3">Module Width:</label>
+      <input type="text" id="param3" placeholder="0">
+
+      <label for="param4">Tractor Front Dist:</label>
+      <input type="text" id="param4" placeholder="0">
+
+      <label for="param5">Trailer Height:</label>
+      <input type="text" id="param5" placeholder="0">
+
+      <label for="param6">Module Height:</label>
+      <input type="text" id="param6" placeholder="0">
+
+      <label for="param7">Tractor Back Dist:</label>
+      <input type="text" id="param7" placeholder="0">
+
+      <label for="param8">Trailer Length:</label>
+      <input type="text" id="param8" placeholder="0">
+
+      <label for="param9">Module Length:</label>
+      <input type="text" id="param9" placeholder="0">
+
+      <label for="param10">Tractor Axle 2-1 Dist:</label>
+      <input type="text" id="param10" placeholder="0">
+
+      <label for="param11">Trailer Axle 1 Dist:</label>
+      <input type="text" id="param11" placeholder="0">
+
+      <label for="param12">Num Modules per Truck</label>
+      <input type="text" id="param12" placeholder="0">
+
+      <label for="param13">Tractor Axle 3-1 Dist:</label>
+      <input type="text" id="param13" placeholder="0">
+
+      <label for="param14">Trailer Axle 2 Dist:</label>
+      <input type="text" id="param14" placeholder="0">
+
+      <label for="param15">Tractor Axle 1 Back Dist:</label>
+      <input type="text" id="param15" placeholder="0">
+
+      <label for="param16">Use Vehicle Params:</label>
+      <input type="text" id="param16" placeholder="0">
+
+      <label for="param17">Use Module Params:</label>
+      <input type="text" id="param17" placeholder="0">
+
+      <!-- 提交 -->
+      <button id="submit-button">submit</button>
+
+      <img src="images/truck.jpg" style="grid-column: span 6;">
+
+      
+    </div>
+
+    <!-- 折叠按钮 -->
+    <!-- <div class="collapse-btn" id="collapse-btn">^</div> -->
+
+  </div>
+
+  <div id='map' class='map'></div>
+  <script src='bundle.js'></script>
+
+  <!-- </div> -->
+</body>
+
+</html>
